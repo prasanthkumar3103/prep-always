@@ -1,0 +1,43 @@
+DIR=/prd/psftp/psbatch/gbl/archive
+
+cd $DIR
+
+find - type d -mtime +45 -exec rm -rf {} \;
+
+exit 0;
+
+
+
+cd /prd/psftp/psbatch/gbl/archive
+
+export BkpDate=`date +%Y%m%d`
+
+mkdir $BkpDate
+
+mkdir $Bkpdate/MYSIA
+
+gzip MY*
+
+gzip GLB*
+
+mv MY*.gz $BkpDate/MYSIA
+
+mv GLB*.gz $Bkpdate/MYSIA
+
+chmod -R 775 /prd/psftp/psbatch/gbl/archive
+
+exit 0;
+
+
+du -sh ;logs
+
+
+
+find /root -type f -size 100M
+
+
+find . type f -name '*' -exec sed -i 's/ppk/ppk3103/g' {} \;
+
+netstat -lnp | grep 80
+
+
