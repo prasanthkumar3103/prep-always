@@ -1,0 +1,24 @@
+FROM ubuntu:14.04
+
+MAINTAINER prashanth K Pamula <prasanthbangs@gmail.com>
+
+LABEL version=1.0.0\
+      app_name="Hotel_checkin"\
+      release_date=13-Dec-2018
+
+RUN apt-get update && apt-get install -y apache2 && apt-get clean
+
+#apt-get clean : this will clean whatever the temp file that used during installation and i wanna hava image size to be small
+
+#environmental variables for apache application
+ENV APACHE_RUN_USER www-data
+
+ENV APACHE_RUN_GROUP www-data
+
+ENV APACHE_LOG_DIR /var/log/apache2
+
+EXPOSE 80
+
+COPY index.html /var/www/
+
+CMD ["/usr/sbin/apache2", "-D", "FOREGROUND"]

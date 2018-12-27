@@ -1,0 +1,48 @@
+1. First Image
+
+FROM alpine:3.6
+CMD echo "Hello Docker world..!"
+
+#Building image
+	docker image build -t hello-world:1.0 .
+
+	-t : giving name for image along with 1.0 version
+	
+Sending build context to Docker daemon 2.048 kB
+Step 1/2 : FROM alpine:3.6
+Trying to pull repository docker.io/library/alpine ...
+3.6: Pulling from docker.io/library/alpine
+3489d1c4660e: Pull complete
+Digest: sha256:cc24af836d1377e092ecb4e8f0a4324c3b1aa2b5295c2239edcc7bbc86a9cbc6
+Status: Downloaded newer image for docker.io/alpine:3.6
+ ---> 94627dfbdf19
+Step 2/2 : CMD echo "Hello Docker world..!"
+ ---> Running in d70cb549cc94
+ ---> 1c923fdfe724
+Removing intermediate container d70cb549cc94
+Successfully built 1c923fdfe724
+	
+	
+docker image ls
+REPOSITORY                                        TAG                 IMAGE ID            CREATED             SIZE
+hello-world                                       1.0                 1c923fdfe724        2 minutes ago       4.03 MB
+docker.io/alpine                                  3.6                 94627dfbdf19        3 months ago        4.03 MB
+
+docker image history 1c923fdfe724 <image id>
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+1c923fdfe724        3 minutes ago       /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "ec...   0 B
+94627dfbdf19        3 months ago        /bin/sh -c #(nop)  CMD ["/bin/sh"]              0 B
+<missing>           3 months ago        /bin/sh -c #(nop) ADD file:ad486f580145bd2...   4.03 MB
+
+
+Build image process:-
+---------------------
+FROM alpine:3.6
+CMD echo "Hello Docker world..!"
+
+1. it creates a image only with os and runs a container, on top of it running container
+2. it will add another instruction and creates another intermediate stage
+
+it goes on and on.
+
+	
