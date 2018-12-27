@@ -1,0 +1,48 @@
+Java script object notation
+-----------------------------
+
+Structure:-
+--------------
+we will be creating below structure 
+
+AwsTemplateFormatversion: 
+Description: will be describing What this template does
+Metadata: Properties of your template
+Parameters: any values that you want to pass to template will be parameters
+Mappings:dependencies b/w aws resources
+conditions: while stacking is created/updated ,these specified conditions will be looked on to
+output: whatever the template output will come under header
+Resources(The only section that is required).
+
+advantages
+----------
+Time saving
+all environmets can be consistent(naming standards etc)
+
+
+
+S3 bucket syntax:
+-----------------
+
+{
+    "Resources" : {
+   "Name of  your bucket" : {
+       "Type" : "resource type"
+   }     
+
+    }
+}
+
+
+Sample S3 bucket
+----------------
+{
+    "Resources" : {
+"myS3Bucket" : {
+    "Type" : "AWS::S3::Bucket"
+    }
+
+}
+
+
+vpc-subnets-rt-sg
