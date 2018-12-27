@@ -1,0 +1,6 @@
+com\denofprogramming\controller\IdentifierGenerationController.class
+com\denofprogramming\random\RandomGenerator.class
+com\denofprogramming\random\GeneratedRandomIdentifier.class
+com\denofprogramming\config\Config.class
+com\denofprogramming\config\WebInitializer.class
+com\denofprogramming\random\DefaultRandomNumberGenerator.class
