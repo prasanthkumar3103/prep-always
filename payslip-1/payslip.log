@@ -1,0 +1,21 @@
+2018-11-10 23:16:27 ERROR PaySlipGenerator:68 - Error while reading Employee details from CSV file. 
+Please ensure the following:
+
+1. Input files(employees.csv & taxrules.csv) and the jar file are in the path where this command is being executed.
+2. The values in the CSV file are valid
+2018-11-10 23:16:27 ERROR PaySlipGenerator:68 - Error while reading Employee details from CSV file. 
+Please ensure the following:
+
+1. Input files(employees.csv & taxrules.csv) and the jar file are in the path where this command is being executed.
+2. The values in the CSV file are valid
+2018-11-10 23:16:27 INFO  GeneratePaySlip:183 - Payslip CSV File created successfully.
+2018-11-10 23:16:27 ERROR PaySlipGenerator:68 - Error while reading Employee details from CSV file. 
+Please ensure the following:
+
+1. Input files(employees.csv & taxrules.csv) and the jar file are in the path where this command is being executed.
+2. The values in the CSV file are valid
+2018-11-10 23:16:27 ERROR PaySlipGenerator:68 - Error while reading Employee details from CSV file. 
+Please ensure the following:
+
+1. Input files(employees.csv & taxrules.csv) and the jar file are in the path where this command is being executed.
+2. The values in the CSV file are valid

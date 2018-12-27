@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GeneratePaySlip.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">payslipgenerator</a> &gt; <a href="index.source.html" class="el_package">com.au.myob.payslip.main</a> &gt; <span class="el_source">GeneratePaySlip.java</span></div><h1>GeneratePaySlip.java</h1><pre class="source lang-java linenums">package com.au.myob.payslip.main;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.log4j.Logger;
+
+import com.au.myob.payslip.exceptions.InvalidInputDataException;
+import com.au.myob.payslip.exceptions.PayslipOutputWriterException;
+import com.au.myob.payslip.util.GeneratePaySlipEnum;
+import com.au.myob.payslip.vo.Employee;
+import com.au.myob.payslip.vo.Payslip;
+import com.au.myob.payslip.vo.Rule;
+
+/**
+ * The main stub with implementation for the following.
+ * 
+ * 1. Reading the list of employees from the csv file
+ * 2. Creating the rules from the taxcomputation rules csv file
+ * 3. Creating the list of payslips for the employees based on the taxation rules
+ * 4. Creating the output csv file with the list of payslips
+ * 
+ * @author Silas
+ *
+ */
+
+<span class="fc" id="L35">public class GeneratePaySlip implements IGeneratePaySlip</span>
+{
+	
+<span class="fc" id="L38">	final static Logger logger = Logger.getLogger(GeneratePaySlip.class);</span>
+	
+	private List&lt;Employee&gt; employees;
+	private List&lt;Rule&gt; rules;
+	private List&lt;Payslip&gt; payslips;
+	
+	
+	/**
+	 * Method to read the csv file and create a list of Employee objects 
+	 * 
+	 * @param employeeFileName - name of the csv file with the list of employee details
+	 * @return list of Employees.
+	 */
+    public List&lt;Employee&gt; readInputFile(String employeeFileName) throws InvalidInputDataException {
+<span class="nc" id="L52">		try (Stream&lt;String&gt; lines = Files.lines(Paths.get(employeeFileName))) {</span>
+			
+			Employee employee;
+<span class="nc" id="L55">			employees = new ArrayList&lt;Employee&gt;();</span>
+<span class="nc" id="L56">			List&lt;List&lt;String&gt;&gt; values = lines.map(line -&gt; Arrays.asList(line.split(&quot;,&quot;))).collect(Collectors.toList());</span>
+<span class="nc" id="L57">			values.remove(0);</span>
+			
+<span class="nc bnc" id="L59" title="All 2 branches missed.">			for(List&lt;String&gt; list : values) {</span>
+<span class="nc" id="L60">				employee = new Employee();</span>
+<span class="nc" id="L61">				employee.setFirstName(list.get(0));</span>
+<span class="nc" id="L62">				employee.setLastName(list.get(1));</span>
+<span class="nc" id="L63">				employee.setAnnaulSalary(Integer.parseInt(list.get(2)));</span>
+<span class="nc" id="L64">				employee.setSuperRate(list.get(3));</span>
+<span class="nc" id="L65">				employee.setStateDate(list.get(4));</span>
+<span class="nc" id="L66">				employees.add(employee);</span>
+<span class="nc" id="L67">			}</span>
+			
+<span class="nc bnc" id="L69" title="All 8 branches missed.">		} catch (NumberFormatException nfe) {</span>
+<span class="nc" id="L70">			throw new InvalidInputDataException(GeneratePaySlipEnum.READ_EMPLOYEE_INPUTFILE_ERROR_MESSAGE</span>
+<span class="nc" id="L71">					.getTextValue());</span>
+<span class="fc" id="L72">		} catch (IOException e) {</span>
+<span class="fc" id="L73">			throw new InvalidInputDataException(GeneratePaySlipEnum.READ_EMPLOYEE_INPUTFILE_ERROR_MESSAGE</span>
+<span class="fc" id="L74">					.getTextValue());</span>
+<span class="nc" id="L75">		}</span>
+		
+<span class="nc" id="L77">		return employees;</span>
+    }
+    
+	/**
+	 * Method to calculate tax and create payslip by applying the tax rules (from taxcalculation.csv)
+	 * on the employee data 
+	 * 
+	 * @param listOfEmployees
+	 * @param - name of the csv file with the tax rules
+	 * @return list of Payslips.
+	 */
+    public List&lt;Payslip&gt; computeTaxAndCreatePaySlip(List&lt;Employee&gt; employees, String _rulesFileName) throws InvalidInputDataException {
+    	
+    	Rule rule;
+    	Payslip payslip;
+<span class="nc" id="L92">    	payslips = new ArrayList&lt;Payslip&gt;();</span>
+<span class="nc" id="L93">		rules = new ArrayList&lt;Rule&gt;();</span>
+<span class="nc" id="L94">		try (Stream&lt;String&gt; rulesLines = Files.lines(Paths.get(_rulesFileName))) {</span>
+			
+<span class="nc" id="L96">			List&lt;List&lt;String&gt;&gt; rulesList = rulesLines.map(ruleLine </span>
+<span class="nc" id="L97">					-&gt; Arrays.asList(ruleLine.split(</span>
+<span class="nc" id="L98">							GeneratePaySlipEnum.COMMA_DELIMITER.getTextValue())))</span>
+<span class="nc" id="L99">					.collect(Collectors.toList());</span>
+<span class="nc" id="L100">			rulesList.remove(0);</span>
+			
+<span class="nc bnc" id="L102" title="All 2 branches missed.">			for(List&lt;String&gt; list : rulesList) {</span>
+<span class="nc" id="L103">				rule = new Rule();</span>
+<span class="nc" id="L104">				rule.setMinimum_salary(Integer.parseInt(list.get(0)));</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">				rule.setMaximum_salary(Integer.parseInt((list.get(1).equals(GeneratePaySlipEnum.UNDEFINED.getTextValue()))?new Integer(Integer.MAX_VALUE).toString():list.get(1)));</span>
+<span class="nc" id="L106">				rule.setFixed_tax(Integer.parseInt(list.get(2)));</span>
+<span class="nc" id="L107">				rule.setVariable_tax(Float.parseFloat(list.get(3)));</span>
+<span class="nc" id="L108">				rules.add(rule);</span>
+<span class="nc" id="L109">			}</span>
+
+<span class="nc bnc" id="L111" title="All 2 branches missed.">			for(Employee employee : employees) {</span>
+				
+<span class="nc" id="L113">				   Predicate&lt;Rule&gt; rulePredicate = </span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">						   predicateCandidate -&gt; (employee.getAnnaulSalary() &gt;= predicateCandidate.getMinimum_salary() </span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">						   	&amp;&amp; employee.getAnnaulSalary() &lt; predicateCandidate.getMaximum_salary());</span>
+<span class="nc" id="L116">				   Rule matchingRule = rules.stream().filter(rulePredicate).findFirst().get();</span>
+				   
+<span class="nc" id="L118">				   payslip = new Payslip();</span>
+<span class="nc" id="L119">				   int incomeTax = 0;</span>
+<span class="nc" id="L120">				   payslip.setFullName(employee.getFirstName() + </span>
+<span class="nc" id="L121">						   GeneratePaySlipEnum.SPACE.getTextValue() + employee.getLastName());</span>
+<span class="nc" id="L122">				   payslip.setPayPeriod(employee.getStateDate());</span>
+<span class="nc" id="L123">				   payslip.setGrossIncome(employee.getAnnaulSalary() / </span>
+<span class="nc" id="L124">						   GeneratePaySlipEnum.MONTHS.getIntValue());</span>
+				   
+<span class="nc" id="L126">				   incomeTax = </span>
+<span class="nc" id="L127">						   (int) ((matchingRule.getFixed_tax() + (employee.getAnnaulSalary() - </span>
+<span class="nc" id="L128">								   matchingRule.getMinimum_salary()) * </span>
+<span class="nc" id="L129">								   (matchingRule.getVariable_tax() / </span>
+<span class="nc" id="L130">										   GeneratePaySlipEnum.PERCENTILE.getIntValue())) / </span>
+<span class="nc" id="L131">								   GeneratePaySlipEnum.MONTHS.getIntValue());</span>
+<span class="nc" id="L132">				   payslip.setIncomeTax(incomeTax);</span>
+<span class="nc" id="L133">				   payslip.setNetIncome(payslip.getGrossIncome() - incomeTax);</span>
+<span class="nc" id="L134">				   payslip.setSprAnnuation((int) (payslip.getGrossIncome() * </span>
+<span class="nc" id="L135">						   (Float.parseFloat(employee.getSuperRate())/</span>
+<span class="nc" id="L136">								   GeneratePaySlipEnum.PERCENTILE.getIntValue())));</span>
+<span class="nc" id="L137">				   payslips.add(payslip);</span>
+				   
+<span class="nc" id="L139">			}</span>
+<span class="nc bnc" id="L140" title="All 8 branches missed.">		} catch (NumberFormatException nfe) {</span>
+<span class="nc" id="L141">			throw new InvalidInputDataException(GeneratePaySlipEnum.COMPUTE_TAX_ERROR_MESSAGE</span>
+<span class="nc" id="L142">					.getTextValue());</span>
+			
+<span class="nc" id="L144">		} catch (IOException e) {</span>
+<span class="nc" id="L145">			throw new InvalidInputDataException(GeneratePaySlipEnum.COMPUTE_TAX_ERROR_MESSAGE.getTextValue());</span>
+<span class="nc" id="L146">		}</span>
+		
+<span class="nc" id="L148">		return payslips;</span>
+		
+    }
+
+	/**
+	 * Method to calculate tax and create payslip by applying the tax rules (from taxcalculation.csv)
+	 * on the employee data 
+	 * 
+	 * @param listOfPayslips
+	 * @param - name of the csv file to which the payslips are to be written
+	 */
+    public void printPaySlips(List&lt;Payslip&gt; payslips, String outputFileName) 
+    		throws PayslipOutputWriterException {
+    	
+<span class="fc" id="L162">    	FileWriter fileWriter = null;</span>
+        try {
+<span class="fc" id="L164">            fileWriter = new FileWriter(outputFileName);</span>
+<span class="fc" id="L165">            fileWriter.append(GeneratePaySlipEnum.PAYSLIP_FILE_HEADER.getTextValue().toString());</span>
+<span class="fc" id="L166">            fileWriter.append(GeneratePaySlipEnum.NEW_LINE_SEPARATOR.getTextValue());</span>
+            
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        	for(Payslip paySlip : payslips) {</span>
+<span class="nc" id="L169">        		fileWriter.append(paySlip.getFullName());</span>
+<span class="nc" id="L170">                fileWriter.append(GeneratePaySlipEnum.COMMA_DELIMITER.getTextValue());</span>
+<span class="nc" id="L171">        		fileWriter.append(paySlip.getPayPeriod());</span>
+<span class="nc" id="L172">                fileWriter.append(GeneratePaySlipEnum.COMMA_DELIMITER.getTextValue());</span>
+<span class="nc" id="L173">        		fileWriter.append(new Integer(paySlip.getGrossIncome()).toString());</span>
+<span class="nc" id="L174">                fileWriter.append(GeneratePaySlipEnum.COMMA_DELIMITER.getTextValue());</span>
+<span class="nc" id="L175">        		fileWriter.append(new Integer(paySlip.getIncomeTax()).toString());</span>
+<span class="nc" id="L176">                fileWriter.append(GeneratePaySlipEnum.COMMA_DELIMITER.getTextValue());</span>
+<span class="nc" id="L177">        		fileWriter.append(new Double(paySlip.getNetIncome()).toString());</span>
+<span class="nc" id="L178">                fileWriter.append(GeneratePaySlipEnum.COMMA_DELIMITER.getTextValue());</span>
+<span class="nc" id="L179">        		fileWriter.append(new Integer(paySlip.getSprAnnuation()).toString());</span>
+<span class="nc" id="L180">                fileWriter.append(GeneratePaySlipEnum.NEW_LINE_SEPARATOR.getTextValue());</span>
+<span class="nc" id="L181">        	}</span>
+
+<span class="fc" id="L183">            logger.info(GeneratePaySlipEnum.PAYSLIP_CSV_SUCCESS_MESSAGE.getTextValue());</span>
+<span class="fc" id="L184">        } catch (Exception e) {</span>
+<span class="fc" id="L185">            throw new PayslipOutputWriterException(GeneratePaySlipEnum.PAYSLIP_CSV_ERROR_MESSAGE.getTextValue());</span>
+        } finally {
+<span class="fc" id="L187">            try {</span>
+<span class="fc" id="L188">                fileWriter.flush();</span>
+<span class="fc" id="L189">                fileWriter.close();</span>
+<span class="nc" id="L190">            } catch (Exception e) {</span>
+<span class="pc" id="L191">                throw new PayslipOutputWriterException(GeneratePaySlipEnum.PAYSLIP_CSV_FINALIZE_ERROR_MESSAGE.getTextValue());</span>
+<span class="fc" id="L192">            }</span>
+        }
+<span class="fc" id="L194">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
