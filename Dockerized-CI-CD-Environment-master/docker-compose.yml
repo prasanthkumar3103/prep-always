@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  jenkins:
+    build:
+      context: ./docker/jenkins
+      dockerfile: Dockerfile
+    image: ayoubensalem/jenkins
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins:/var/jenkins_home
+      - ./docker/jenkins/settings.xml:/etc/maven/settings.xml
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - appnet
+  nexus:
+    image: sonatype/nexus3
+    ports:
+      - "8081:8081"
+    volumes:
+      - nexus-data:/nexus-data
+    networks:
+      - appnet
+  sonar:
+    image: sonarqube
+    env_file:
+      - sonar_env
+    depends_on:
+      - db
+    ports:
+      - "9000:9000"
+      - "9002:9002"
+    networks:
+      - appnet
+  db:
+    image: postgres:9.6-alpine
+    ports:
+      - 4545:5432
+    env_file:
+      - postgres_env
+    restart: always
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    networks:
+      - appnet
+
+
+
+networks:
+  appnet:
+    driver: bridge
+volumes:
+  postgresql:
+  postgresql_data:
+  nexus-data:
