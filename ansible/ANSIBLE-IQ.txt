@@ -1,0 +1,44 @@
+Handlers:
+  it is like giving relationship btwn 2 tasks when change has happened in first task and notify to corresponding
+  tasks to start next task
+  
+Roles:
+  Roles is way of organising variable,tasks,handlers,files,template
+  Roles are flexible to reuse and easy to maintain
+
+variable precedence:
+-------------------
+Role Default
+inventory vars
+inventory groups
+playbook vars
+host facts
+
+  
+Playbook:-
+----------
+having configuration in playbook will be lengthy
+
+we can split up task in 2 ways: 1.using include 2.roles
+  
+  
+Allow Duplicates: True
+  is for i want to same role with different values then we use.
+
+how do you call other file in roles?
+ include: files/main.yaml
+
+how do you store output of one task and use it in another task?
+ using register
+ 
+which task executes first when you execute playbook?
+ gather facts
+ 
+what is when?
+condition
+
+what is tag?
+i have multiple plays/tasks, i want to run only one then we use tags
+
+
+  

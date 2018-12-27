@@ -1,0 +1,70 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+   - name: this will ping
+     ping:
+	 
+   - name: copy a file
+     copy: src=/root/one.txt dest=/opt/
+	 
+   - name: create a file
+     file:
+	   dest: /opt/one.txt
+	   state: present
+	   
+   - name: delete a directory
+     file:
+	   dest: /root/ppk
+	   state: absent
+	   
+   - name: find current directory
+     command: pwd
+	 
+   - name: install tree
+     yum:
+	   name: wget
+	   state: installed
+	   
+   - name: Install web server Apache
+     package:
+	   name: httpd
+	   state: latest
+	 notify: start web server service
+	 
+   - handlers:
+       name: start web server service
+	   service:
+	     name: httpd
+		 state: restarted
+	- name: copy nginx config file
+  copy: src=files/nginx.conf dest=/etc/nginx/sites-available/default
+
+it copies file from local or remote machine to remote or local machine
+
+- name: enable configuration #(creating symbolic lynk)
+     file: >
+       dest=/etc/nginx/sites-available/default
+       src=/etc/nginx/sites-available/default
+       state=link
+	   
+shell: to execute linux commands like change dir
+    - name: start example node.js app in background
+      shell: "{{ node_app_location }}/app/app.js >>stdout.txt 2> stderror.txt &"
+	  
+get_url: to download packages or files from internet
+
+    - name: Download composer installer
+      get_url:
+        url: https://getcomposer.org/installer
+        dest: /tmp/composer-installer.php
+        mode: 0755
+		
+- name: Synchronization of src on the control machine to dest on the remote hosts
+  synchronize:
+    src: some/relative/path
+    dest: /some/absolute/path
+	
+why notify?
+
+run handlers post tasks complete		
