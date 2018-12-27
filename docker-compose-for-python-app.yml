@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+
+  pythonapp:
+    image: chgoutham/pythonapp:1.0.0 #image
+    deploy:   #deploy tag creating whenever i want to deploy
+      replicas: 5 #howmany replicas u want in cluster  # if someone told to improve capacity we have to use increase replicas
+      resources:  #cgroups
+        limits:
+          cpus: "0.1"
+          memory: 75m #75mb for container
+      restart_policy:
+        condition: on-failure #manager is goin to restart
+    ports:
+      - "80:80"
+    networks:
+      - mypythonnet # network name for app
+
+networks:
+  mypythonnet:
+
+  
+  
+  docker stack ls  --list of stakcs gives
+  docker stack deploy -c docker-compose.yml mycluster-python-app
+  docker stack ps mycluster-python-app
+  docker node ls
+  
