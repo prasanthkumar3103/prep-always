@@ -1,0 +1,10 @@
+SysOps Administrator
+
+Security management:-
+
+HIPPA: framework how helathcare info handles(for americans)	
+ISO: internation standard
+PCI: for  kind of retail(payment card industry data security standard(payment gateway)
+
+These we need to implement as per our organization.
+Here we choose/set policies 
