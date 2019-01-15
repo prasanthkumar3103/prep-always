@@ -1,0 +1,42 @@
+# Run this N.virginia
+
+Mappings:  #Mapping regions with AMI id's to figure out 
+  RegionMap:
+    us-east-1:
+      AMI: ami-1853ac65
+    us-west-1:
+      AMI: ami-bf5540df
+    eu-west-1:
+      AMI: ami-3bfab942
+    ap-southeast-1:
+      AMI: ami-e2adf99e
+    ap-southeast-2:
+      AMI: ami-43874721
+
+Resources:
+  Ec2Instance: #Logical ID
+    Type: 'AWS::EC2::Instance' #Resource type
+    Properties:
+      InstanceType: t2.micro
+      ImageId: 
+        Fn::FindInMap:  #first parameter we pass to find region map(this finds right ami id from mappings and creates ec2)
+        - RegionMap
+        - !Ref AWS::Region # second parameter we pass to find region
+        - AMI  # passing property to return from AMI
+      Tags:  # Name Tag for instance
+        - Key: "Name"
+          Value: !Join 
+            - ""
+            - - " EC2 Instance for "
+              - !Ref AWS::Region # Scenarion Instance name should be :  EC2 Instance for ap-south-1
+      SecurityGroups: # this is linking sg to ec2 instances using ref 
+        - !Ref MySecurityGroup
+  MySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0  

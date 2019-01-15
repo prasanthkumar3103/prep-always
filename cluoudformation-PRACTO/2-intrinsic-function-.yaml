@@ -1,0 +1,13 @@
+# This Example covers of creating Ec2 instance,instance type t2.micro ami amazon linux and name tag for instance
+
+Resources:
+  Ec2Instance: #Logical ID
+    Type: 'AWS::EC2::Instance' #Resource type
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0ad42f4f66f6c1cc9 #amazon linux AMI in mumbai
+      Tags:  # Name Tag for instance
+        - Key: "Name"
+          Value: !Join [ " ", [ EC2, instance, with, Fn, Join ] ]
+               
+              

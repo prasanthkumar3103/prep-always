@@ -1,0 +1,51 @@
+
+
+
+# Run this N.virginia
+
+Parameters: # this will ask/choose params for Name of an existing ec2 keypair to enable ssh access into the server &Name for stack
+  NameOfService:
+    Description: "The name of the service this stack to be used for"
+    Type: String
+  KeyName: # this is keypair
+    Description: Name of an existing ec2 keypair to enable ssh access into the server
+    Type: AWS::EC2::KeyPair::KeyName
+
+Mappings:  #Mapping regions with AMI id's to figure out 
+  RegionMap:
+    us-east-1:
+      AMI: ami-1853ac65
+    us-west-1:
+      AMI: ami-bf5540df
+    eu-west-1:
+      AMI: ami-3bfab942
+    ap-southeast-1:
+      AMI: ami-e2adf99e
+    ap-southeast-2:
+      AMI: ami-43874721
+
+Resources:
+  Ec2Instance: #Logical ID
+    Type: 'AWS::EC2::Instance' #Resource type
+    Properties:
+      InstanceType: t2.micro
+      ImageId: 
+        Fn::FindInMap:  #first parameter we pass to find region map(this finds right ami id from mappings and creates ec2)
+        - RegionMap
+        - !Ref AWS::Region # second parameter we pass to find region
+        - AMI  # passing property to return from AMI
+      Tags:  # Name Tag for instance
+        - Key: "Name"
+          Value: !Ref NameOfService
+      KeyName: !Ref KeyName
+      SecurityGroups: # this is linking sg to ec2 instances using ref 
+        - !Ref MySecurityGroup
+  MySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0  

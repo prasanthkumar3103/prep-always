@@ -1,0 +1,71 @@
+use jnlp method for this 
+
+cloudbees/jnlp-slave-with-java-build-tools
+
+Dockerfile
+
+FROM cloudbees/java-build-tools
+
+USER root
+
+ARG JENKINS_REMOTING_VERSION=3.27
+
+# See https://github.com/jenkinsci/docker-slave/blob/master/Dockerfile#L31
+RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/$JENKINS_REMOTING_VERSION/remoting-$JENKINS_REMOTING_VERSION.jar \
+&& chmod 755 /usr/share/jenkins \
+&& chmod 644 /usr/share/jenkins/slave.jar
+
+COPY jenkins-slave /usr/local/bin/jenkins-slave
+
+RUN chmod a+rwx /home/jenkins
+WORKDIR /home/jenkins
+USER jenkins
+
+ENTRYPOINT ["/opt/bin/entry_point.sh", "/usr/local/bin/jenkins-slave"]
+
+
+install docker in jenkins master
+
+for docker node we need to make sure docker host is listening on host ip
+
+to enable this option
+
+cat /etc/sysconfig/docker | grep OPTIONS
+OPTIONS='--selinux-enabled --log-drive=journald --signature-verification=false -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
+
+we need to change H options
+systemctl start docker
+
+install docker plugin(from cli/gui)
+
+
+go to manage jenkins--configure page--goto end of the page--add new cloud(amazon/docker/eucalyptus)
+choose :docker
+
+docker
+Name:docker-jenkins
+Docker Host url: tcp://192.168.33.214:2375
+tcp :protocal
+192.168.33.214- dockerhost
+2375:port
+
+server credentials: we have not setup any creds so do test connection 
+
+in the same page,go to add docker agent template
+
+labels(to identify):docker-jenkins-slave
+docker image:cloudbees/jnlp-slave-with-java-build-tools
+usage mode:only builds with label expression matching this node
+
+connect method:connect with jnp
+
+jenkinsurl:http://192.168.33.215
+
+pull strategey:pull once and update latest
+
+save this 
+
+go to anyjob and update the label
+
+
+ 

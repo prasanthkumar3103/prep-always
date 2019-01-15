@@ -1,0 +1,32 @@
+
+# Modify Tags section for the ec2 instance
+  #    Tags:  # Name Tag for instance
+ #       - Key: "Name"
+#          Value: !Join [ " ", [ EC2, instance, with, Fn, Join ] ]
+
+# Scenarion Instance name should be :  EC2 Instance for ap-south-1
+
+
+Resources:
+  Ec2Instance: #Logical ID
+    Type: 'AWS::EC2::Instance' #Resource type
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0ad42f4f66f6c1cc9 #amazon linux AMI in mumbai
+      Tags:  # Name Tag for instance
+        - Key: "Name"
+          Value: !Join 
+            - ""
+            - - " EC2 Instance for "
+              - !Ref AWS::Region # Scenarion Instance name should be :  EC2 Instance for ap-south-1
+      SecurityGroups: # this is linking sg to ec2 instances using ref 
+        - !Ref MySecurityGroup
+  MySecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0          

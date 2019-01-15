@@ -1,0 +1,48 @@
+backing up and restoring jenkins data in remote location
+---------------------------------------------------------
+1.installing the periodic backup plugin
+
+manage jenkins---manage plugin---available--periodic backup plugin
+
+2.it needs dedicated local location to store these backups
+
+go to jenkins master 1 & created back up directory
+
+mkdir -p /opt/jenkins_backups
+chown -R jenkins:jenkins /opt/jenkins_backups
+
+go to manage jenkins page
+will have option called periodic backup manager
+
+click on configure:-
+
+temporary dir :/tmp
+back schedul: 0 1 * * *
+maximum backups in location 20
+store no older than(days) : 20
+
+storage strategey:
+null storage
+targz storage (choose)
+zip storage
+
+backup location;
+localdirectory
+path:/opt/jenkins_backups
+
+validate the path & save config
+
+go to backup now option and wait for results, tell u full backup is ready.
+
+
+go to jobs and delete one job
+
+go to peridic backup manager & do restore
+
+u will have job restored.
+
+3. remote location need to store backups(s3,efs and so on)
+
+
+
+

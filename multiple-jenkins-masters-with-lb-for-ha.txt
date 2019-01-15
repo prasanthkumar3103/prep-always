@@ -1,0 +1,116 @@
+high availability plugin
+
+
+
+2 new ec2,which we will serve as jenkins master
+EFS(nfs):- we will mount file system in each of jenkins master(var/lib/jenkins/job)
+
+var/lib/jenkins/job: this location shares the jobs b/w 2 masters
+
+
+
+1st master will be active node
+
+2nd master will be passive node(passive is for if active node goes down ,passive takes care)
+
+
+created same id b/w 2 masters with private key of ssh(id name :jenkins)
+
+
+
+go to EFS
+
+create file system
+
+name file system :jenkins
+
+go with next default steps
+
+
+mount file system to jenkins
+
+
+yum -y install nfs-utils
+
+vi /etc/fstab
+
+end of the file add mount info
+
+eu-west-1a.dnanameofefsfilesystem(fs-1cxxxx.efs.eu-west-1.amazon.com):/var/lib/jenkins/jobs nfs defaults 0 0
+savefile
+
+nfs : telling to file that nfs is file system.
+
+systemctl stop jenkins
+
+mount /var/lib/jenkins/jobs
+df -h
+
+fs-1cxxxx.efs.eu-west-1.amazon.com:/ /var/lib/jenkins/jobs
+
+ls -l /var/lib/jenkins/jobs
+
+here jobs directory pointed to root,change it to jenkins id
+chown -R jenkins:jenkins /var/lib/jenkins/jobs
+ls -l /var/lib/jenkins/jobs
+systemctl start jenkins
+
+
+follow the same steps for 2nd master as well.
+
+
+create a one job in 1stmaster and run
+
+go to 2nd master and reload jenkins(to reload jenkins data)
+(to reload we can create cron to reload config in script)
+
+vi /etc/cron.d/jenkins_reload
+*/1  * * * * root /bin/bash /opt/jenkins_reload.sh
+
+jenkins_reload : cron name
+
+run a job from 1st node ,cron will take care of move jobs
+
+go to 3rd server for LB;-
+---------------------------
+yum install -y haproxy
+
+vi /etc/haproxy/haproxy.cfg
+remove whole file
+add below configuration
+------------------------
+defaults
+ log global
+maxconn 2000
+mode http
+option redispatch
+option forwardfor
+option http-server-close
+retries 3
+timeout http-request 10s
+timeout queue 1m
+timeout connect 10s
+timeout client 1m
+timeout server 1m
+timeout check 10s
+
+frontend ft_jenkins
+ bind *.80
+ default_backend bk_jenkins
+ reqadd X-Forwarded-Proto:\ http
+
+
+backend bk_jekins # servers definitions and port
+ server jenkins1 172.31.44.197:80 check
+ server jenkins1 172.31.40.144:80 check backup
+
+#ha proxy check config and based available server route the trafffic
+
+save this file
+
+systemctl start haproxy
+ps -ef | grep haproxy
+
+goto lb(haproxy) hostname or ip and try using.
+
+

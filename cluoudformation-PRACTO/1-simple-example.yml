@@ -1,0 +1,9 @@
+Resources:
+  Ec2Instance: #Logical ID
+    Type: 'AWS::EC2::Instance' #Resource type
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-467ca739 #amazon linux AMI in n.virginia
+      Tags:  # Name Tag for instance
+        - Key: Name
+          Value: A Simple Example
