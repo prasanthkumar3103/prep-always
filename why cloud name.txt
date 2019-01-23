@@ -1,0 +1,30 @@
+why cloud name
+
+its just a buzz word u have a remote data center located somewhereelse where
+we consume the services over the internet
+
+single point of failure
+
+high availability
+
+load balance
+
+auto scaling
+
+above are the industry pblms, to solve this they reached out to vm ware,no solution
+
+open source hypervisor: a guy found in internet and thought to solve SOA,HA,LB,AS
+
+xen hypervisor
+
+kvm : citrix
+
+hyper -v : microsoft
+
+exsi: v centre(vsphere)
+
+hvm : hardware virtual machine(linux)s
+
+
+
+

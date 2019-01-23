@@ -1,0 +1,38 @@
+Route53
+--------
+Everytime u create route53 entry it will create nameserver.
+Name server needs to be updated with domain 
+
+domain : citibank.com,icicibank.com
+
+           N.REC  DOMAIN	
+Name server:>>>>>>xxxx
+Name server:>>>>>>xxxx
+Name server:>>>>>>xxxx
+
+
+Notes:
+------
+Buy domain for your app in godaddy/bigrock
+
+go to route53 and create domain,it will give domain name server records
+
+take route53 name server records and add/update in godaddy/bigrock dnsnames records
+
+
+https:-
+------
+certifacte
+
+aws service: certificate manager(ssl) : free in aws
+godaddy(ssl)
+bigrock(ssl)
+
+
+aws service: certificate manager(ssl) : free in aws
+---------------------------------------------------
+domain name: *.saddamdesign.site
+
+dns validate: this will go to r53 and records check --->confirm and request.
+it will take 10-15mins to confirm
+if not created ,within the page,click on create records in r53.

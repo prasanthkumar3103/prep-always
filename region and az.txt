@@ -1,0 +1,15 @@
+Regions:
+--------
+
+region : Service status
+
+each region has multiple data centres as az
+
+
+
+total regions 20
+
+only 17 will appear in console
+
+
+govt opted regions doesnt appear in console.

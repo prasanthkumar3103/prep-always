@@ -1,0 +1,25 @@
+what we do orchestrated and automated.
+
+
+orchestration :
+---------------
+
+collection of steps that admins executed them in sequence order
+
+is a collection of automation ,sequence them in order.
+
+adding/remove storage,
+restart service
+
+
+automation :
+------------
+manual task is being automated
+
+1.taking back up 2. deleting machine.
+
+
+what is migration?
+-----------------
+
+
